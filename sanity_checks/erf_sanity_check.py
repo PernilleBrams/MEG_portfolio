@@ -8,9 +8,6 @@ import json
 sys.path.append(str(Path(__file__).parents[1]))
 from utils import preprocess_data_sensorspace # NOTE TO PERN MOVED FUNCTION TO UTILS AS IT IS BEING USED IN MULTIPLE SCRIPTS
 
-
-
-
 if __name__ in "__main__":
     path = Path(__file__).parents[1]
 
