@@ -7,11 +7,12 @@ __pycache__/
 *.so
 
 # folders
-835482/
+835482/*
+834761/*
 
-834761/
-
-
+# folders
+sanity_checks/plots/*
+sanity_checks/plots_button_removed/*
 
 # Distribution / packaging
 .Python
