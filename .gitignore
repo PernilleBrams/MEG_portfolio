@@ -13,6 +13,7 @@ __pycache__/
 # folders
 sanity_checks/plots/*
 sanity_checks/plots_button_removed/*
+sanity_checks/plots_button_removed_topo/*
 
 # Distribution / packaging
 .Python
