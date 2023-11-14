@@ -4,38 +4,33 @@ GFP Processing Script
 This script provides functionality to process and plot Global Field Power (GFP) for MEG data along with topomaps at GFP peaks.
 
 Modules:
-    - mne: Required for MEG data processing.
-    - numpy and matplotlib: Required for data manipulation and plotting.
-    - scipy.signal: Required for peak detection in GFP.
-    - json: Required for reading session info from JSON files.
-    - sys and pathlib: Required for file and path operations.
-    - utils: Custom module that contains the preprocess_data_sensorspace function.
+    - mne: Needed for MEG data processing
+    - numpy and matplotlib: Needed for data manipulation and plotting
+    - scipy.signal: Needed for peak detection in GFP
+    - json: Needed for reading session info from JSON files
+    - sys and pathlib: Needed for file and path operations
+    - and utils contains the preprocess_data_sensorspace function
 
-Functions:
+Functions used:
     - calculate_and_plot_erf_gfp_with_topomaps(epochs, ch_type='mag', event_id=None, title=None, filename=None): 
-      Calculates and plots the ERF and GFP for the provided epochs and displays topomaps at GFP peaks.
+      Calculates and plots the ERF and GFP for the provided epochs and displays topomaps at GFP peaks
     - main(): The main function that drives the script, defining paths, loading session info, and iterating 
-      over subjects and recordings to process the data.
+      over subjects and recordings to process the data
 
 Usage:
     To run the script from the terminal, navigate to the directory containing the script and execute:
         $ python <script_name>.py
 
-Note: 
-    Ensure that the 'utils' module with 'preprocess_data_sensorspace' function and other dependencies 
-    are available in the appropriate path or directory.
-    Ensure the paths and folders are correctly set up in the script.
-
 Example Terminal Usage:
     $ python gfp_processing.py
 
 Dependencies:
-    - Ensure you have the 'mne', 'numpy', 'matplotlib', and 'scipy' libraries installed.
-    - The 'utils' module with 'preprocess_data_sensorspace' function must be available.
-    - Relevant data directories and files as mentioned in the script should be in place.
+    - Ensure you have the 'mne', 'numpy', 'matplotlib', and 'scipy' libraries installed
+    - The 'utils' module with 'preprocess_data_sensorspace' function must be available
+    - Relevant data directories and files (as mentioned in script)
 """
 
-
+# Modules
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import find_peaks
@@ -45,7 +40,7 @@ import json
 import sys
 from utils import preprocess_data_sensorspace
 
-
+# Defining function
 def calculate_and_plot_erf_gfp_with_topomaps(epochs, ch_type='mag', event_id=None, title=None, filename=None):
     """
     Calculate and plot Event-Related Field (ERF), Global Field Power (GFP), 
@@ -54,20 +49,21 @@ def calculate_and_plot_erf_gfp_with_topomaps(epochs, ch_type='mag', event_id=Non
     Parameters
     ----------
     epochs : mne.Epochs
-        The epoched data.
+        The epoched data
     ch_type : str, optional
-        Channel type to be picked ('mag' or 'grad'). Default is 'mag'.
+        Channel type to be picked ('mag' or 'grad'). Default is 'mag'
     event_id : int or str, optional
-        The id of the event for which to compute the ERF.
-        If None (default), all epochs will be used.
+        The id of the event for which to compute the ERF
+        If None (default), all epochs will be used
     title : str, optional
         Title for the plot.
-        If None (default), no title will be added.
+        If None (default), no title will be added
     filename : str or Path, optional
-        Path where the plot should be saved.
-        If None (default), the plot is only displayed and not saved.
+        Path where the plot should be saved
+        If None (default), the plot is only displayed and not saved
     """
-    # Specify the channel type and average the epochs
+    
+    # Specifying channel type and averaging epochs
     erf = (epochs[event_id].copy().pick_types(meg=ch_type).average() 
            if event_id 
            else epochs.copy().pick_types(meg=ch_type).average())
@@ -75,7 +71,7 @@ def calculate_and_plot_erf_gfp_with_topomaps(epochs, ch_type='mag', event_id=Non
     # Compute GFP
     gfp = np.sqrt((erf.data ** 2).mean(axis=0))
 
-    # Find peaks in the GFP
+    # Find peaks in GFP
     peaks, _ = find_peaks(gfp, distance=20)
     peak_times = erf.times[peaks]
 
@@ -88,13 +84,13 @@ def calculate_and_plot_erf_gfp_with_topomaps(epochs, ch_type='mag', event_id=Non
     axes[1].set_xticks(np.arange(np.min(erf.times), np.max(erf.times), 0.1))
     axes[1].set_xticklabels([f"{tick*1000:.0f}" for tick in erf.times[::10]])
 
-    # Adjust layout
+    # Adjusting layout
     plt.tight_layout()
     if title:
         fig.suptitle(title, fontsize=16, y=1.02)
         plt.tight_layout(rect=[0, 0, 1, 0.97])
 
-    # Plot topomaps at peaks
+    # Plotting topomaps at peaks
     for idx, peak_time in enumerate(peak_times):
         _, ax_topo = plt.subplots(1, 1, figsize=(3, 3))
         erf.plot_topomap(times=peak_time, size=3, show=False, axes=ax_topo, colorbar=False)
@@ -105,9 +101,9 @@ def calculate_and_plot_erf_gfp_with_topomaps(epochs, ch_type='mag', event_id=Non
 
 def main():
     """
-    Main function that drives the script, defining paths, loading session info, and processing the data.
+    Main function (drives the script, defining paths, loading session info, and processing the data)
     """
-    # Define paths and settings
+    # Defining paths and settings
     NOTEBOOK_PATH = Path("/work/PernilleHøjlundBrams#8577/notebooks_PHB/MEG_portfolio/sanity_checks")
     sys.path.append(str(NOTEBOOK_PATH.parents[0]))
 
@@ -155,7 +151,6 @@ def main():
             title = f"GFP for Subject: {subject}, Session: {recording_name}"
             filename = PLOT_PATH / f"{subject}_{recording_name}_ERF_plot.png"
             calculate_and_plot_erf_gfp_with_topomaps(epochs, event_id=None, title=title, filename=filename)
-
 
 if __name__ == "__main__":
     main()
