@@ -3,18 +3,17 @@ ERF Processing Script
 
 This script provides functionality to process and plot Event-Related Fields (ERF) for MEG data.
 
-Modules:
-    - mne: Required for MEG data processing.
-    - json: Required for reading session info from JSON files.
-    - sys and pathlib: Required for file and path operations.
+Needed modules:
+    - mne: Required for MEG data processing
+    - json: Required for reading session info from JSON files
+    - sys and pathlib: Required for file and path operations
 
 Functions:
-    - load_session_info(filepath): Reads session info from a given JSON file.
-
-    - get_event_id(recording_name): Determines the event ID based on the recording name.
+    - load_session_info(filepath): Reads session info from a given JSON file
+    - get_event_id(recording_name): Determines the event ID based on the recording name
     - process_subject_data(subject, recording_name, session_info, MEG_data_path, ICA_path, plot_path): 
-      Processes the MEG data for a given subject and recording name and generates ERF plots.
-    - calculate_and_plot_erf(epochs, event_id=None, title=None, filename=None): 
+      Processes the MEG data for a given subject and recording name and generates ERF plots
+    - calculate_and_plot_erf(epochs, event_id=None, title=None, filename=None)
     - main(): The main function that drives the script, defining paths, loading session info, and iterating 
       over subjects and recordings to process the data.
 
@@ -22,18 +21,10 @@ Usage:
     To run the script from the terminal, navigate to the directory containing the script and execute:
         $ python <script_name>.py
 
-Note: 
-    Ensure that the 'utils' module with 'preprocess_data_sensorspace' function and other dependencies 
-    are available in the appropriate path or directory.
-    Ensure the paths and folders are correct.
-
-Example Terminal Usage:
-    $ python erf_processing.py
-
 Dependencies:
-    - Ensure you have the 'mne' library installed.
-    - The 'utils' module with 'preprocess_data_sensorspace' function must be available.
-    - Relevant data directories and files as mentioned in the script should be in place.
+    - Must have the 'mne' library installed.
+    - The 'utils' module with 'preprocess_data_sensorspace' function must be available
+    - Relevant data directories and files in script
 """
 
 def calculate_and_plot_erf(epochs, event_id=None, title=None, filename=None):
@@ -43,16 +34,16 @@ def calculate_and_plot_erf(epochs, event_id=None, title=None, filename=None):
     Parameters
     ----------
     epochs : mne.Epochs
-        The epoched data.
+        The epoched data
     event_id : int or str, optional
-        The id of the event for which to compute the ERF. 
-        If None (default), all epochs will be used.
+        The id of the event for which to compute the ERF
+        If None (default), all epochs will be used
     title : str, optional
-        The title to be added on top of the plots. 
-        If None (default), no title will be added.
+        The title to be added on top of the plots
+        If None (default), no title will be added
     filename : str or Path, optional
-        The path and filename where the plot should be saved. 
-        If None (default), the plot won't be saved, but only displayed.
+        The path and filename where the plot should be saved
+        If None (default), the plot won't be saved, but only displayed
     """
 
     if event_id is not None:
@@ -101,13 +92,11 @@ def calculate_and_plot_erf(epochs, event_id=None, title=None, filename=None):
     
     return erf
 
-# func
+# funcs
 import json
 from pathlib import Path
 import sys
-
 import mne
-
 from utils import preprocess_data_sensorspace
 
 
@@ -128,6 +117,7 @@ def get_event_id(recording_name):
             "img/assigned/negative": 22
         }
 
+# Defining process_subject_data function
 def process_subject_data(subject, recording_name, session_info, MEG_data_path, ICA_path, plot_path):
     subject_info = session_info[subject]
     reject = subject_info["reject"]
@@ -173,11 +163,9 @@ def main():
         '001.self_block1', '002.other_block1', '003.self_block2',
         '004.other_block2', '005.self_block3', '006.other_block3'
     ]
-
     for subject in SUBJECTS:
         for recording_name in RECORDING_NAMES:
             process_subject_data(subject, recording_name, SESSION_INFO, MEG_DATA_PATH, ICA_PATH, PLOT_PATH)
-
 
 if __name__ == '__main__':
     main()
